@@ -1,6 +1,6 @@
 {
   "name": "playwright-qatouch-reporter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Playwright plugin allows you to push your test results into QATouch.",
   "main": "dist/index.js",
   "scripts": {
@@ -23,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/qatouch/playwright-qatouch-reporter/issues"
   },
-  "homepage": "https://github.com/qatouch/playwright-qatouch-reporter#readme"
+  "homepage": "https://github.com/qatouch/playwright-qatouch-reporter#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "sync-request": "^6.1.0"
+  }
 }
