@@ -1,0 +1,27 @@
+{
+  "name": "playwright-qatouch-reporter",
+  "version": "1.0.0",
+  "description": "Playwright plugin allows you to push your test results into QATouch.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qatouch/playwright-qatouch-reporter.git"
+  },
+  "keywords": [
+    "Playwright",
+    "QA",
+    "Touch",
+    "Reporter",
+    "Plugin",
+    "Custom-Reporter"
+  ],
+  "author": "QA Touch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qatouch/playwright-qatouch-reporter/issues"
+  },
+  "homepage": "https://github.com/qatouch/playwright-qatouch-reporter#readme"
+}
