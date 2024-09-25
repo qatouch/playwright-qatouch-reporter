@@ -32,6 +32,32 @@ class QATouchReporter {
                 this.results.push(...results);
             }
         }
+        else if (result.status === 'failed') {
+            const status_id = this.qaTouch.statusConfig('failed');
+            const caseIds = this.qaTouch.TitleToCaseIds(test.title);
+
+            if (caseIds.length > 0) {
+                const results = caseIds.map(caseId => ({
+                    case_id: caseId,
+                    status_id: status_id,
+                }));
+                this.results.push(...results);
+            }
+
+        }
+        else if (result.status === 'skipped') {
+            const status_id = this.qaTouch.statusConfig('Untested');
+            const caseIds = this.qaTouch.TitleToCaseIds(test.title);
+
+            if (caseIds.length > 0) {
+                const results = caseIds.map(caseId => ({
+                    case_id: caseId,
+                    status_id: status_id,
+                }));
+                this.results.push(...results);
+            }
+
+        }
        console.log(`Finished test ${test.title}: ${result.status}`);
     }
 
