@@ -20,43 +20,32 @@ class QATouchReporter {
     }
 
     onTestEnd(test, result) {
-        if (result.status === 'passed') {
-            const status_id = this.qaTouch.statusConfig('Passed');
-            const caseIds = this.qaTouch.TitleToCaseIds(test.title);
-
-            if (caseIds.length > 0) {
-                const results = caseIds.map(caseId => ({
-                    case_id: caseId,
-                    status_id: status_id,
-                }));
-                this.results.push(...results);
-            }
+        const caseIds = this.qaTouch.TitleToCaseIds(test.title);
+        
+        let status_id;
+        switch(result.status) {
+          case 'passed':
+            status_id = this.qaTouch.statusConfig('Passed');
+            break;
+          case 'failed':
+            status_id = this.qaTouch.statusConfig('Failed');
+            break;
+          case 'timedOut':
+          case 'interrupted':
+            status_id = this.qaTouch.statusConfig('Retest');
+            break;
+          case 'skipped':
+          default:
+            status_id = this.qaTouch.statusConfig('Untested');
+            break;
         }
-        else if (result.status === 'failed') {
-            const status_id = this.qaTouch.statusConfig('Failed');
-            const caseIds = this.qaTouch.TitleToCaseIds(test.title);
 
-            if (caseIds.length > 0) {
-                const results = caseIds.map(caseId => ({
-                    case_id: caseId,
-                    status_id: status_id,
-                }));
-                this.results.push(...results);
-            }
-
-        }
-        else if (result.status === 'skipped') {
-            const status_id = this.qaTouch.statusConfig('Untested');
-            const caseIds = this.qaTouch.TitleToCaseIds(test.title);
-
-            if (caseIds.length > 0) {
-                const results = caseIds.map(caseId => ({
-                    case_id: caseId,
-                    status_id: status_id,
-                }));
-                this.results.push(...results);
-            }
-
+        if (caseIds.length > 0) {
+            const results = caseIds.map(caseId => ({
+                case_id: caseId,
+                status_id: status_id,
+            }));
+            this.results.push(...results);
         }
        console.log(`Finished test ${test.title}: ${result.status}`);
     }
