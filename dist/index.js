@@ -33,7 +33,7 @@ class QATouchReporter {
             }
         }
         else if (result.status === 'failed') {
-            const status_id = this.qaTouch.statusConfig('failed');
+            const status_id = this.qaTouch.statusConfig('Failed');
             const caseIds = this.qaTouch.TitleToCaseIds(test.title);
 
             if (caseIds.length > 0) {
