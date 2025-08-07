@@ -23,7 +23,7 @@ class QATouch {
             },
         };
 
-        let result = request("PATCH", this._url(endPoint), configure);
+        let result = request("POST", this._url(endPoint), configure);
         result = JSON.parse(result.getBody('utf8'));
         if (result.error) {
             if (error) {
