@@ -18,6 +18,7 @@ class QATouchReporter {
     onTestBegin(test, result) {
         console.log(`Starting test ${test.title}`);
     }
+    
 
     onTestEnd(test, result) {
         const caseIds = this.qaTouch.TitleToCaseIds(test.title);

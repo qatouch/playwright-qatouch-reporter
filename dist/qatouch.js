@@ -21,6 +21,7 @@ class QATouch {
 
             if (r.attachments && Array.isArray(r.attachments)) {
                 r.attachments.forEach(file => {
+                    
 // console.log("Processing attachment:", file);
                     if (!file.path || !file.path.toLowerCase().endsWith('.png')) {
                         return;
