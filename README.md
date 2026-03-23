@@ -64,6 +64,7 @@ Please open playwright.config.js file, replace below code reporter and screensho
  reporter: [["html"],["playwright-qatouch-reporter"]],
 
 ```
+Screenshot enable setting
 
 ```Javascript
  
@@ -77,6 +78,7 @@ Please open playwright.config.js file, replace below code reporter and screensho
 ```
 
 In order to use reporter, you should add meta information to your tests. Meta key should be TRXXX ID (TestRun Code in qatouch), e.g.:
+
 
 
 ```Javascript
