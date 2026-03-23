@@ -40,14 +40,37 @@ class QATouchReporter {
             break;
         }
 
+        const execution_time = result.duration / 1000;
+        const attachments = result.attachments;
+        const comments = `Executed via Playwright Automation`;
+
         if (caseIds.length > 0) {
+
             const results = caseIds.map(caseId => ({
                 case_id: caseId,
                 status_id: status_id,
+                execution_time: execution_time,
+                comments: comments,
+                attachments: attachments,
+                description : `${test.title} (${test.parent.project().name})`,
+                testedBy:`${test.parent.project().name}`,
+
             }));
+    
             this.results.push(...results);
+    
         }
-       console.log(`Finished test ${test.title}: ${result.status}`);
+
+        // if (caseIds.length > 0) {
+        //     const results = caseIds.map(caseId => ({
+        //         case_id: caseId,
+        //         status_id: status_id,
+        //     }));
+        //     this.results.push(...results);
+        // }
+        // console.log(`Finished test ${test.title}: ${result.status}`);
+        // console.log("Execution time:", execution_time);
+        // console.log("Attachments:", attachments);
     }
 
     onEnd(result) {

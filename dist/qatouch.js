@@ -1,6 +1,7 @@
 "use strict";
 
-const request = require('sync-request')
+const request = require('sync-request');
+const fs = require("fs");
 
 class QATouch {
     constructor(options) {
@@ -12,76 +13,117 @@ class QATouch {
         return `${this.base}${path}`;
     }
 
-    publish(results,error=undefined) {
-        let finalArray = this.addResultsForTestRun(results);
-        let endPoint = `testRunResults/status/multiple?project=${this.options.projectKey}&test_run=${this.options.testRunId}&result=${JSON.stringify(finalArray)}&comments=Status changed by playwright automation script.`;
-        let configure = {
-            headers: {
-                "api-token": this.options.apiToken,
-                "domain": this.options.domain,
-                "Content-Type": "application/json"
-            },
-        };
+    publish(results, error = undefined) {
 
-        let result = request("POST", this._url(endPoint), configure);
-        result = JSON.parse(result.getBody('utf8'));
-        if (result.error) {
-            if (error) {
-                error(result.error);
-            } else {
-                throw new Error(result.error);
+        let finalArray = results.map(r => {
+
+            let attachments = [];
+
+            if (r.attachments && Array.isArray(r.attachments)) {
+                r.attachments.forEach(file => {
+// console.log("Processing attachment:", file);
+                    if (!file.path || !file.path.toLowerCase().endsWith('.png')) {
+                        return;
+                    }
+
+                    try {
+                        let binary = fs.readFileSync(file.path);
+
+                        attachments.push({
+                            name: file.name,
+                            contentType: 'image/png',
+                            content: binary.toString('base64')
+                        });
+                    } catch (e) {
+                        console.log("Attachment read failed:", file.path);
+                    }
+                });
+            }
+
+            return {
+                case: r.case_id,
+                status: r.status_id,
+                execution_time:  this.formatExecutionTime(r.execution_time || 0),
+                comments: 'Executed via Playwright Automation - ' + 
+                (r.testedBy ? r.testedBy.charAt(0).toUpperCase() + r.testedBy.slice(1) : '') + 
+                ' Browser Status',                description: r.description || '',
+                attachments: attachments
+            };
+        });
+
+        const chunkSize = 5;
+        // console.log(finalArray);
+        // return;
+
+        for (let i = 0; i < finalArray.length; i += chunkSize) {
+
+            const chunk = finalArray.slice(i, i + chunkSize);
+
+            let configure = {
+                headers: {
+                    "api-token": this.options.apiToken,
+                    "domain": this.options.domain,
+                    "Content-Type": "application/json"
+                },
+                json: {
+                    project: this.options.projectKey,
+                    test_run: this.options.testRunId,
+                    result: JSON.stringify(chunk)                }
+            };
+
+            try {
+                let res = request("POST", this._url("testRunResults/playwright/status/multiple"), configure);
+
+                let result = JSON.parse(res.getBody('utf8'));
+
+                if (result.error) {
+                    if (error) {
+                        error(result.error);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                }
+
+            } catch (err) {
+                console.error("Chunk failed:", err.message);
+                if (error) {
+                    error(err.message);
+                } else {
+                    throw err;
+                }
             }
         }
     }
 
-    addResultsForTestRun(results) {
-        let result = [];
-        results.forEach(function (value, item) {
-            result.push({
-                'case': value.case_id,
-                'status': value.status_id,
-            });
-        });
-        return result;
+     formatExecutionTime(time) {
+        if (!time) return '0ms';
+    
+        if (time < 1) {
+            return Math.round(time * 1000) + 'ms';
+        } else {
+            return time.toFixed(1) + 's';
+        }
     }
 
     statusConfig(status) {
-        let statusId = 2;
         switch (status) {
-            case 'Passed':
-                statusId = 1;
-                break;
-            case 'Untested':
-                statusId = 2;
-                break;
-            case 'Blocked':
-                statusId = 3;
-                break;
-            case 'Retest':
-                statusId = 4;
-                break;
-            case 'Failed':
-                statusId = 5;
-                break;
-            case 'Not Applicable':
-                statusId = 6;
-                break;
-            case 'In Progress':
-                statusId = 7;
-                break;
-            default:
-                statusId = 2;
+            case 'Passed': return 1;
+            case 'Untested': return 2;
+            case 'Blocked': return 3;
+            case 'Retest': return 4;
+            case 'Failed': return 5;
+            case 'Not Applicable': return 6;
+            case 'In Progress': return 7;
+            default: return 2;
         }
-        return statusId;
     }
 
     TitleToCaseIds(title) {
         let caseIds = [];
-        let testCaseIdRegExp = /\bTR(\d+)\b/g;
+        let regex = /\bTR(\d+)\b/g;
         let m;
-        while((m = testCaseIdRegExp.exec(title)) !== null) {
-            let caseId = parseInt(m[1]);
-            caseIds.push(caseId);
+        while ((m = regex.exec(title)) !== null) {
+            caseIds.push(parseInt(m[1]));
         }
         return caseIds;
     }
