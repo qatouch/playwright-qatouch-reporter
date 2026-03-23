@@ -56,12 +56,23 @@ QATOUCH_TESTRUN_ID=Test-Run-Id
 
 
 # Usage
-Please open playwright.config.js file, replace below code
+Please open playwright.config.js file, replace below code reporter and screenshot enabled in the configure JSON
 
 
 ```Javascript
  
  reporter: [["html"],["playwright-qatouch-reporter"]],
+
+```
+
+```Javascript
+ 
+ use: {
+    /* Base URL to use in actions like `await page.goto('')`. */
+     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    screenshot:'on',
+ 
+  },
 
 ```
 
@@ -81,6 +92,7 @@ test.only('TR0035 hastitle', async ({ page }) => {
 - https://www.npmjs.com/package/playwright-qatouch-reporter
 - https://qatouch.com/
 - https://help.qatouch.com/
+- https://help.qatouch.com/docs/v2/playwright
 - https://doc.qatouch.com/
 
 

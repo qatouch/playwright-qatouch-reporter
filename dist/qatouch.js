@@ -3,6 +3,7 @@
 const request = require('sync-request');
 const fs = require("fs");
 
+
 class QATouch {
     constructor(options) {
         this.options = options;

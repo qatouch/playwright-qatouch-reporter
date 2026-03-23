@@ -1,6 +1,7 @@
 const QATouch  = require('./qatouch.js');
 require('dotenv').config()
 
+
 const options= {
     'domain' : process.env.QATOUCH_DOMAIN,
     'apiToken': process.env.QATOUCH_API_TOKEN,
