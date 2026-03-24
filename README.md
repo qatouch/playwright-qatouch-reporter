@@ -64,7 +64,7 @@ Please open playwright.config.js file, replace below code reporter and screensho
  reporter: [["html"],["playwright-qatouch-reporter"]],
 
 ```
-Screenshot enable setting
+## Enable Screenshot Setting
 
 ```Javascript
  
@@ -79,7 +79,9 @@ Screenshot enable setting
 
 In order to use reporter, you should add meta information to your tests. Meta key should be TRXXX ID (TestRun Code in qatouch), e.g.:
 
+## Sample Code with Attachment Sync
 
+Playwright-generated screenshots to the respective test cases in QA Touch, helping teams quickly debug failures with complete visual and execution evidence.
 
 ```Javascript
 test.only('TR0035 hastitle', async ({ page }) => {
@@ -87,8 +89,14 @@ test.only('TR0035 hastitle', async ({ page }) => {
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/End to End Test Management Tool | Software Test Management tool | QA Touch/);
+
+  const timestamp = Date.now();
+  await page.screenshot({ path: `tests/screenshots/qatouch-${timestamp}.png`});
+
 });
 ```
+
+
 
 ## References
 - https://www.npmjs.com/package/playwright-qatouch-reporter
